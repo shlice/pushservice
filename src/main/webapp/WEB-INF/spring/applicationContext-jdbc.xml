@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+    <!-- data source -->
+    <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+        <property name="targetDataSource">
+            <bean class="org.logicalcobwebs.proxool.ProxoolDataSource">
+                <property name="driver" value="${db.driver.class}"/>
+                <property name="driverUrl" value="${db.url}"/>
+                <property name="user" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+                <property name="maximumConnectionCount" value="${proxool.maxConnCount}"/>
+                <property name="minimumConnectionCount" value="${proxool.minConnCount}"/>
+                <property name="statistics" value="${proxool.statistics}"/>
+                <property name="simultaneousBuildThrottle" value="${proxool.simultaneousBuildThrottle}"/>
+                <property name="trace" value="${proxool.trace}"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- 配置hibernate <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="configLocation" value="/WEB-INF/hibernate/hibernate.cfg.xml">
+        </property> <property name="dataSource"> <ref bean="dataSource" /> </property>
+        </bean> -->
+
+    <!-- 配置JdbcTemplate类 -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+
+    <bean id="appService" class="com.xapp.service.AppService">
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+
+    <!-- spring jdbctemplate的事务处理 1注解方式
+    <tx:annotation-driven transaction-manager="transactionManager" />-->
+    <!-- end: spring jdbctemplate的事务处理 1 -->
+
+    <!-- spring jdbctemplate的事务处理 2AOP方式 -->
+    <!-- 定义事务传播属性 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="query*" read-only="true"/>
+            <tx:method name="has*" read-only="true"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="transactionPointCut" expression="execution(* com.xapp.service.*.*(..))"/>
+        <aop:advisor pointcut-ref="transactionPointCut" advice-ref="txAdvice"/>
+    </aop:config>
+    <!-- end: spring jdbctemplate的事务处理 2 -->
+
+    <!-- spring jdbctemplate的事务处理 3配置代理方式：需调用代理类操作
+	<bean id="appServiceProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="appService" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="create*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="insert*">PROPAGATION_REQUIRED</prop>
+				<prop key="add*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>-->
+    <!-- end: spring jdbctemplate的事务处理 3 -->
+</beans>
