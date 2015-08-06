@@ -18,7 +18,7 @@
                     name: $("form#joinform input[name='name']").val(),
                     dateTime: getDateTime()
                 },
-                sign: "x123ass34124"
+                sign: "x123a@s!s(3@41^2!@^4"
             };
 
             postData(obj);
@@ -28,22 +28,10 @@
                 type: "LEAVE",
                 body: {
                     user_id: $("form#leaveform input[name='uid']").val(),
+                    token: $("form#leaveform input[name='token']").val(),
                     dateTime: getDateTime()
                 },
-                sign: "x123ass34124"
-            };
-
-            postData(obj);
-        }
-        function testupdate() {
-            var obj = {
-                type: "UPDATE",
-                body: {
-                    user_id: $("form#updateform input[name='uid']").val(),
-                    token: $("form#updateform input[name='token']").val(),
-                    dateTime: getDateTime()
-                },
-                sign: "x123ass34124"
+                sign: "x123a@s!s(3@41^2!@^4"
             };
 
             postData(obj);
@@ -57,7 +45,7 @@
                     msg: $("form#pushform input[name='payload']").val(),
                     dateTime: getDateTime()
                 },
-                sign: "x123ass34124"
+                sign: "x123a@s!s(3@41^2!@^4"
             };
 
             postData(obj);
@@ -70,7 +58,7 @@
                     msg: $("form#pushmsgform input[name='message']").val(),
                     dateTime: getDateTime()
                 },
-                sign: "x123ass34124"
+                sign: "x123a@s!s(3@41^2!@^4"
             };
 
             postData(obj);
@@ -83,7 +71,7 @@
                     badge: parseInt($("form#pushbadgeform input[name='badge']").val()),
                     dateTime: getDateTime()
                 },
-                sign: "x123ass34124"
+                sign: "x123a@s!s(3@41^2!@^4"
             };
 
             postData(obj);
@@ -131,8 +119,8 @@
     </table>
 </form>
 
-<h3>Update Test</h3>
-<form id="updateform">
+<h3>Leave Test</h3>
+<form id="leaveform">
     <table>
         <tr>
             <td width="80">uid:</td>
@@ -141,19 +129,6 @@
         <tr>
             <td>token:</td>
             <td><input name="token"/></td>
-        </tr>
-        <tr>
-            <td colspan="2"><input type="button" onclick="testupdate()" value="UPDATE"/></td>
-        </tr>
-    </table>
-</form>
-
-<h3>Leave Test</h3>
-<form id="leaveform">
-    <table>
-        <tr>
-            <td width="80">uid:</td>
-            <td><input name="uid"/></td>
         </tr>
         <tr>
             <td colspan="2"><input type="button" onclick="testleave()" value="LEAVE"/></td>

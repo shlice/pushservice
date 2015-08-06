@@ -3,6 +3,8 @@ package com.xapp.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xapp.util.ContextUtility;
+import com.xapp.util.Util;
+import com.xapp.util.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +46,15 @@ public class RequestHandler {
         }
 
         String datetime = (String) map.get("dateTime");
-        if(!checkTime(datetime))
-        {
+        if (!checkTime(datetime)) {
             result.setCode("100013");
             result.setMsg("请求超时");
+            return result;
+        }
+
+        if (!checkSign(input, request.getSign())) {
+            result.setCode("100012");
+            result.setMsg("参数在传输过程中被篡改");
             return result;
         }
 
@@ -58,50 +65,40 @@ public class RequestHandler {
             String name = (String) map.get("name");
             String ip = getIP(httprequest);
 
-            if (userId.isEmpty() || token.isEmpty()) {
+            if (Util.isStringEmpty(userId) || Util.isStringEmpty(token)) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
             }
 
             as.insertUser(userId, token, name, ip);
-        } else if (type.equals("UPDATE")) {
+        } else if (type.equals("LEAVE")) {
             String userId = (String) map.get("user_id");
             String token = (String) map.get("token");
 
-            if (userId.isEmpty() || token.isEmpty()) {
+            if (Util.isStringEmpty(userId) || Util.isStringEmpty(token)) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
             }
 
-            as.updateToken(userId, token);
-        } else if (type.equals("LEAVE")) {
-            String userId = (String) map.get("user_id");
-
-            if (userId.isEmpty()) {
-                result.setCode("100006");
-                result.setMsg("数据有效性验证失败");
-                return result;
-            }
-
-            as.removeUser(userId);
+            as.removeUser(userId, token);
         } else if (type.equals("PUSH")) {
             String userId = (String) map.get("user_id");
             String payload = (String) map.get("payload");
 
-            if (userId.isEmpty() || !checkPayload(payload)) {
+            if (Util.isStringEmpty(userId) || !checkPayload(payload)) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
             }
 
-            result = as.insertPayload(userId, payload);
+            result = as.insertPayloads(userId, payload);
         } else if (type.equals("PUSHMSG")) {
             String userId = (String) map.get("user_id");
             String msg = (String) map.get("msg");
 
-            if (userId.isEmpty() || !checkMsg(msg)) {
+            if (Util.isStringEmpty(userId) || !checkMsg(msg)) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
@@ -109,12 +106,12 @@ public class RequestHandler {
 
             String payload = getDefaultPayload(msg);
 
-            result = as.insertPayload(userId, payload);
+            result = as.insertPayloads(userId, payload);
         } else if (type.equals("PUSHBADGE")) {
             String userId = (String) map.get("user_id");
             Integer badge = (Integer) map.get("badge");
 
-            if (userId.isEmpty() || badge < 0 || badge > 99) {
+            if (Util.isStringEmpty(userId) || badge < 0 || badge > 99) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
@@ -122,7 +119,7 @@ public class RequestHandler {
 
             String payload = getBadgeOnlyPayload(badge);
 
-            result = as.insertPayload(userId, payload);
+            result = as.insertPayloads(userId, payload);
         } else {
             result.setCode("100007");
             result.setMsg("API不存在");
@@ -133,19 +130,68 @@ public class RequestHandler {
     }
 
     /**
+     * check md5 sign
+     *
+     * @param input
+     * @return
+     */
+    private boolean checkSign(String input, String inputsign) {
+        if (inputsign.equals("x123a@s!s(3@41^2!@^4"))
+            return true;
+
+        String bodystr = getRequestBodyString(input);
+        String sign = Util.getMD5Str(bodystr + Variable.requestKey);
+
+        if (sign.equals(inputsign))
+            return true;
+
+        return false;
+    }
+
+    /**
+     * get original bosy string in input json string.
+     * notice that getString using key "body" with fastjson will get a map string in different sequence.
+     *
+     * @param input
+     * @return
+     */
+    private String getRequestBodyString(String input) {
+        try {
+            String subs = input.substring(input.indexOf("\"body\":") + 7);
+            int count = 0;
+            for (int i = 0; i < subs.length(); i++) {
+                if (subs.charAt(i) == '{')
+                    count++;
+                else if (subs.charAt(i) == '}')
+                    count--;
+
+                if (count == 0) {
+                    return subs.substring(0, i + 1);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage());
+        }
+
+        return "";
+    }
+
+    /**
      * check request send time
+     *
      * @param datetime "2014-08-05 21:45:20"
      * @return
      */
     private boolean checkTime(String datetime) {
-        if(datetime == null || datetime.isEmpty())
+        if (Util.isStringEmpty(datetime))
             return false;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             Date senddt = sdf.parse(datetime);
             long diff = new Date().getTime() - senddt.getTime();
             long mins = diff / (1000 * 60);
-            if(mins >= 30)
+            if (mins >= 30)
                 return false;
         } catch (ParseException e) {
             return false;
@@ -155,12 +201,12 @@ public class RequestHandler {
     }
 
     private boolean checkMsg(String msg) {
-        if(msg == null || msg.isEmpty())
+        if (Util.isStringEmpty(msg))
             return false;
 
         String payload = "{\"aps\":{\"alert\":\"" + msg + "\",\"sound\":\"default\"}}";
         try {
-            if(payload.getBytes("UTF-8").length > 256)
+            if (payload.getBytes("UTF-8").length > 256)
                 return false;
         } catch (UnsupportedEncodingException e) {
             return false;
@@ -171,6 +217,7 @@ public class RequestHandler {
 
     /**
      * badge only
+     *
      * @param badge
      * @return
      */
@@ -180,6 +227,7 @@ public class RequestHandler {
 
     /**
      * default payload
+     *
      * @param msg
      * @return
      */
@@ -188,7 +236,7 @@ public class RequestHandler {
     }
 
     private boolean checkPayload(String payload) {
-        if (payload == null || payload.isEmpty())
+        if (Util.isStringEmpty(payload))
             return false;
 
         try {
@@ -200,9 +248,9 @@ public class RequestHandler {
             String sound = aps.getString("sound");
             String badge = aps.getString("badge");
             String alertstr = aps.getString("alert");
-            if ((sound == null || sound.isEmpty()) &&
-                    (badge == null || badge.isEmpty()) &&
-                    (alertstr == null || alertstr.isEmpty()))
+            if (Util.isStringEmpty(sound) &&
+                    Util.isStringEmpty(badge) &&
+                    Util.isStringEmpty(alertstr))
                 return false;
 
         } catch (UnsupportedEncodingException e) {

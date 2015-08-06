@@ -18,6 +18,10 @@ public class Result {
         this.msg = "操作成功";
     }
 
+    public boolean isSucc() {
+        return this.code.equals("000000");
+    }
+
     public String getCode() {
         return code;
     }
