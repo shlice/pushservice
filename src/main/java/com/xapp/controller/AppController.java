@@ -1,8 +1,10 @@
 package com.xapp.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.xapp.service.AppService;
 import com.xapp.service.RequestHandler;
 import com.xapp.service.Result;
+import com.xapp.util.ContextUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @Controller
 @RequestMapping("")
@@ -56,12 +59,20 @@ public class AppController {
     }
 
     @RequestMapping(value = "/testapi", method = RequestMethod.GET)
-    public ModelAndView home(HttpServletRequest request) {
+    public ModelAndView testapi(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("testapi");
 //        mv.addObject("content", content);
         return mv;
     }
 
-
+    @RequestMapping(value = "/allusers", method = RequestMethod.GET)
+    public ModelAndView allusers(HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("allusers");
+        AppService as = (AppService) ContextUtility.getBean("appService");
+        List result = as.queryUsers();
+        mv.addObject("users", result);
+        return mv;
+    }
 }

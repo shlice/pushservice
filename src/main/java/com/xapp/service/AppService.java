@@ -12,6 +12,11 @@ public class AppService {
     @Resource
     JdbcTemplate jdbcTemplate;
 
+
+    public List queryUsers() {
+        List result = jdbcTemplate.queryForList("select user_id, device_token, name, ip_address from active_users");
+        return result;
+    }
     /**
      * insertUser or updateUser
      * primary key is (userid,token)
