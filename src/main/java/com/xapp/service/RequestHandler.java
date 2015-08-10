@@ -88,9 +88,9 @@ public class RequestHandler {
 
             as.removeUser(userId, token);
         } else if (type.equals("REPLACE")) {
-            String userId = (String) map.get("delete_user_id");
+            String userId = (String) map.get("delete_uid");
             String token = (String) map.get("delete_token");
-            String newuserId = (String) map.get("user_id");
+            String newuserId = (String) map.get("uid");
             String newtoken = (String) map.get("token");
             String newname = (String) map.get("name");
             String newip = getIP(httprequest);
