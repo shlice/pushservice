@@ -70,6 +70,8 @@ public class RequestHandler {
                 result.setMsg("数据有效性验证失败");
                 return result;
             }
+            if(name == null)
+                name = "";
 
             as.insertUser(userId, token, name, ip);
         } else if (type.equals("LEAVE")) {
@@ -83,6 +85,26 @@ public class RequestHandler {
             }
 
             as.removeUser(userId, token);
+        } else if (type.equals("REPLACE")) {
+            String userId = (String) map.get("delete_user_id");
+            String token = (String) map.get("delete_token");
+            String newuserId = (String) map.get("user_id");
+            String newtoken = (String) map.get("token");
+            String newname = (String) map.get("name");
+            String newip = getIP(httprequest);
+
+            if(newname == null)
+                newname = "";
+
+
+            if (Util.isStringEmpty(userId) || Util.isStringEmpty(token)
+                    || Util.isStringEmpty(newuserId) || Util.isStringEmpty(newuserId)) {
+                result.setCode("100006");
+                result.setMsg("数据有效性验证失败");
+                return result;
+            }
+
+            as.replaceUser(userId, token, newtoken, newuserId, newname, newip);
         } else if (type.equals("PUSH")) {
             String userId = (String) map.get("user_id");
             String payload = (String) map.get("payload");
@@ -254,8 +276,10 @@ public class RequestHandler {
                 return false;
 
         } catch (UnsupportedEncodingException e) {
+            logger.error(e.getLocalizedMessage());
             return false;
         } catch (Exception e) {
+            logger.error(e.getLocalizedMessage());
             return false;
         }
 

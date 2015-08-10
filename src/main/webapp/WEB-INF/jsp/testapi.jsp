@@ -42,7 +42,7 @@
                 body: {
                     user_id: $("form#pushform input[name='uid']").val(),
 //                    payload: "{\"aps\":{\"alert\":\"Hello,\u4e2d\u6587\ue415 world!\",\"sound\":\"default\"}}"
-                    msg: $("form#pushform input[name='payload']").val(),
+                    payload: $("form#pushform input[name='payload']").val(),
                     dateTime: getDateTime()
                 },
                 sign: "x123a@s!s(3@41^2!@^4"

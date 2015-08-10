@@ -51,6 +51,10 @@ public class AppService {
                 .update("delete from active_users where device_token=?", token);
     }
 
+    public void replaceUser(String userId, String token, String newtoken, String newuserId, String newname, String newip) {
+        removeUser(userId, token);
+        insertUser(newuserId, newtoken, newname ,newip);
+    }
     /**
      * send apns payload to user.(not single device)
      * @param userId
