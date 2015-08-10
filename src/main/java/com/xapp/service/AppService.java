@@ -106,7 +106,11 @@ public class AppService {
         int succ_count = 0;
         for(int i=0; i<strarr.length; i++)
         {
+            if(Util.isStringEmpty(strarr[i].trim()))
+                continue;
+
             result = insertPayload(strarr[i].trim(), payload);
+
             if(result.isSucc())
                 succ_count++;
         }
