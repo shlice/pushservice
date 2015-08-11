@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by shild on 2015/7/27.
@@ -60,7 +62,7 @@ public class RequestHandler {
 
         String type = request.getType();
         if (type.equals("JOIN")) {
-            String userId = (String) map.get("user_id");
+            String userId = (String) map.get("uid");
             String token = (String) map.get("token");
             String name = (String) map.get("name");
             String ip = getIP(httprequest);
@@ -75,7 +77,7 @@ public class RequestHandler {
 
             as.insertUser(userId, token, name, ip);
         } else if (type.equals("LEAVE")) {
-            String userId = (String) map.get("user_id");
+            String userId = (String) map.get("uid");
             String token = (String) map.get("token");
 
             if (Util.isStringEmpty(userId) || Util.isStringEmpty(token)) {
@@ -86,19 +88,21 @@ public class RequestHandler {
 
             as.removeUser(userId, token);
         } else if (type.equals("REPLACE")) {
-            String userId = (String) map.get("delete_user_id");
+            String userId = (String) map.get("delete_uid");
             String token = (String) map.get("delete_token");
-            String newuserId = (String) map.get("user_id");
+            String newuserId = (String) map.get("uid");
             String newtoken = (String) map.get("token");
             String newname = (String) map.get("name");
             String newip = getIP(httprequest);
 
+            if(userId == null)
+                userId = "";
+            if(token == null)
+                token = "";
             if(newname == null)
                 newname = "";
 
-
-            if (Util.isStringEmpty(userId) || Util.isStringEmpty(token)
-                    || Util.isStringEmpty(newuserId) || Util.isStringEmpty(newuserId)) {
+            if(Util.isStringEmpty(newuserId) || Util.isStringEmpty(newtoken)) {
                 result.setCode("100006");
                 result.setMsg("数据有效性验证失败");
                 return result;
@@ -106,7 +110,7 @@ public class RequestHandler {
 
             as.replaceUser(userId, token, newtoken, newuserId, newname, newip);
         } else if (type.equals("PUSH")) {
-            String userId = (String) map.get("user_id");
+            String userId = (String) map.get("uid");
             String payload = (String) map.get("payload");
 
             if (Util.isStringEmpty(userId) || !checkPayload(payload)) {
@@ -117,7 +121,7 @@ public class RequestHandler {
 
             result = as.insertPayloads(userId, payload);
         } else if (type.equals("PUSHMSG")) {
-            String userId = (String) map.get("user_id");
+            String userId = (String) map.get("uid");
             String msg = (String) map.get("msg");
 
             if (Util.isStringEmpty(userId) || !checkMsg(msg)) {
@@ -130,7 +134,7 @@ public class RequestHandler {
 
             result = as.insertPayloads(userId, payload);
         } else if (type.equals("PUSHBADGE")) {
-            String userId = (String) map.get("user_id");
+            String userId = (String) map.get("uid");
             Integer badge = (Integer) map.get("badge");
 
             if (Util.isStringEmpty(userId) || badge < 0 || badge > 99) {
@@ -142,6 +146,21 @@ public class RequestHandler {
             String payload = getBadgeOnlyPayload(badge);
 
             result = as.insertPayloads(userId, payload);
+        } else if (type.equals("KGPUSH")) {
+            String userIds = (String) map.get("uid");
+            String msg = (String) map.get("msg");
+            //url and func is user defined fields
+            String url = (String) map.get("url");
+            String func = (String) map.get("func");
+
+            if (Util.isStringEmpty(userIds) || Util.isStringEmpty(msg)) {
+                result.setCode("100006");
+                result.setMsg("数据有效性验证失败");
+                return result;
+            }
+
+            String payload = getKGPushPayload(msg, url, func);
+            result = as.insertPayloads(userIds, payload);
         } else {
             result.setCode("100007");
             result.setMsg("API不存在");
@@ -149,6 +168,54 @@ public class RequestHandler {
         }
 
         return result;
+    }
+
+    private String getKGPushPayload(String msg, String url, String func) {
+        if (Util.isStringEmpty(msg))
+            return "";
+
+        String payload = "{\"aps\":{\"alert\":\"" + msg + "\",\"sound\":\"default\",\"badge\":1}";
+        if (!Util.isStringEmpty(url))
+            payload += ",\"url\":\"" + url + "\"";
+        if (!Util.isStringEmpty(func))
+            payload += ",\"func\":\"" + func + "\"";
+        payload += "}";
+
+        try {
+            int lenth = payload.getBytes("UTF-8").length;
+            if (lenth > 256) {
+                logger.warn("payload is over 256 bytes, msg:" + msg + ",url:" + url);
+
+                // 简单裁剪。有可能末尾汉子，截断后变乱码。是否影响push待测试。
+                int overlenth = lenth - 256;
+                byte[] sourcebytes = msg.getBytes("UTF-8");
+                int keeplength = msg.getBytes("UTF-8").length - overlenth;
+                if(keeplength > 0)
+                {
+                    byte[] target = new byte[keeplength];
+                    for(int i=0; i<keeplength; i++)
+                    {
+                        target[i] = sourcebytes[i];
+                    }
+                    String newmsg = new String(target, "UTF-8");
+                    payload = "{\"aps\":{\"alert\":\"" + newmsg + "\",\"sound\":\"default\",\"badge\":1}";
+                    if (!Util.isStringEmpty(url))
+                        payload += ",\"url\":\"" + url + "\"";
+                    if (!Util.isStringEmpty(func))
+                        payload += ",\"func\":\"" + func + "\"";
+                    payload += "}";
+                }
+                else {
+                    logger.error("no space for msg in payload!");
+                    return "";
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getLocalizedMessage());
+            return "";
+        }
+
+        return payload;
     }
 
     /**
@@ -307,5 +374,11 @@ public class RequestHandler {
         }
 
         return ip;
+    }
+
+    public static void main(String[] args)
+    {
+        RequestHandler r = new RequestHandler(null);
+        r.getKGPushPayload("测试测试测试测试测试测试测试测试测试12中", "http://app.nugget-nj.com/nugget/morningCheck/intopark?c=2013110&dt=20150809092449&u=20141021172851000015&sign=89f5afd07e01ec35c07c104a8adb2176","");
     }
 }

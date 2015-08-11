@@ -13,7 +13,7 @@
             var obj = {
                 type: "JOIN",
                 body: {
-                    user_id: $("form#joinform input[name='uid']").val(),
+                    uid: $("form#joinform input[name='uid']").val(),
                     token: $("form#joinform input[name='token']").val(),
                     name: $("form#joinform input[name='name']").val(),
                     dateTime: getDateTime()
@@ -27,7 +27,7 @@
             var obj = {
                 type: "LEAVE",
                 body: {
-                    user_id: $("form#leaveform input[name='uid']").val(),
+                    uid: $("form#leaveform input[name='uid']").val(),
                     token: $("form#leaveform input[name='token']").val(),
                     dateTime: getDateTime()
                 },
@@ -40,7 +40,7 @@
             var obj = {
                 type: "PUSH",
                 body: {
-                    user_id: $("form#pushform input[name='uid']").val(),
+                    uid: $("form#pushform input[name='uid']").val(),
 //                    payload: "{\"aps\":{\"alert\":\"Hello,\u4e2d\u6587\ue415 world!\",\"sound\":\"default\"}}"
                     payload: $("form#pushform input[name='payload']").val(),
                     dateTime: getDateTime()
@@ -54,7 +54,7 @@
             var obj = {
                 type: "PUSHMSG",
                 body: {
-                    user_id: $("form#pushmsgform input[name='uid']").val(),
+                    uid: $("form#pushmsgform input[name='uid']").val(),
                     msg: $("form#pushmsgform input[name='message']").val(),
                     dateTime: getDateTime()
                 },
@@ -67,7 +67,7 @@
             var obj = {
                 type: "PUSHBADGE",
                 body: {
-                    user_id: $("form#pushbadgeform input[name='uid']").val(),
+                    uid: $("form#pushbadgeform input[name='uid']").val(),
                     badge: parseInt($("form#pushbadgeform input[name='badge']").val()),
                     dateTime: getDateTime()
                 },
