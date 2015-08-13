@@ -6,9 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df2ea9bf-581d-4f41-b97e-db3144a98a56" name="Default" comment="Merge branch 'master' of http://github.com/shlice/pushservice&#10;&#10;Conflicts:&#10;&#9;.idea/workspace.xml&#10;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jdbc.properties" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jdbc.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/testapi.jsp" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/testapi.jsp" />
+    <list default="true" id="df2ea9bf-581d-4f41-b97e-db3144a98a56" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="pushservice.iws" />
@@ -980,7 +978,7 @@
       <workItem from="1439192890733" duration="6738000" />
       <workItem from="1439262952230" duration="2498000" />
       <workItem from="1439379750997" duration="2220000" />
-      <workItem from="1439425091046" duration="85000" />
+      <workItem from="1439425091046" duration="111000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1438410558244</created>
@@ -1012,11 +1010,17 @@
       <option name="project" value="LOCAL" />
       <updated>1439279848960</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="modify jdbc.properties">
+      <created>1439425200671</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1439425200671</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="68789000" />
+    <option name="totallyTimeSpent" value="68815000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-2" width="1696" height="1026" extended-state="0" />
@@ -1037,6 +1041,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26145253" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19621027" sideWeight="0.365" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22860636" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1050,7 +1055,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2972067" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26145253" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1074,7 +1078,8 @@
     <MESSAGE value="add replace" />
     <MESSAGE value="add alluser page" />
     <MESSAGE value="Merge branch 'master' of http://github.com/shlice/pushservice&#10;&#10;Conflicts:&#10;&#9;.idea/workspace.xml&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'master' of http://github.com/shlice/pushservice&#10;&#10;Conflicts:&#10;&#9;.idea/workspace.xml&#10;" />
+    <MESSAGE value="modify jdbc.properties" />
+    <option name="LAST_COMMIT_MESSAGE" value="modify jdbc.properties" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
