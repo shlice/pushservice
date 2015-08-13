@@ -41,7 +41,7 @@
                 type: "PUSH",
                 body: {
                     uid: $("form#pushform input[name='uid']").val(),
-//                    payload: "{\"aps\":{\"alert\":\"Hello,\u4e2d\u6587\ue415 world!\",\"sound\":\"default\"}}"
+//                    payload: "{\"aps\":{\"alert\":\"Hello,\u4e2d\u6587\ue415 world!\",\"sound\":\"default\"}}",
                     payload: $("form#pushform input[name='payload']").val(),
                     dateTime: getDateTime()
                 },
