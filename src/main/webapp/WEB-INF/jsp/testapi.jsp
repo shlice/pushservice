@@ -41,7 +41,7 @@
                 type: "PUSH",
                 body: {
                     uid: $("form#pushform input[name='uid']").val(),
-//                    payload: "{\"aps\":{\"alert\":\"Hello,\u4e2d\u6587\ue415 world!\",\"sound\":\"default\"}}",
+                    //payload: "{\"aps\":{\"alert\":\"Hello,\ue106\ue055\ue415 world!\",\"sound\":\"default\"}}",
                     payload: $("form#pushform input[name='payload']").val(),
                     dateTime: getDateTime()
                 },
@@ -69,6 +69,21 @@
                 body: {
                     uid: $("form#pushbadgeform input[name='uid']").val(),
                     badge: parseInt($("form#pushbadgeform input[name='badge']").val()),
+                    dateTime: getDateTime()
+                },
+                sign: "x123a@s!s(3@41^2!@^4"
+            };
+
+            postData(obj);
+        }
+        function testkgpush() {
+            var obj = {
+                type: "KGPUSH",
+                body: {
+                    uid: $("form#kgpushform input[name='uid']").val(),
+                    msg: $("form#kgpushform input[name='msg']").val(),
+                    url: $("form#kgpushform input[name='url']").val(),
+                    func: $("form#kgpushform input[name='func']").val(),
                     dateTime: getDateTime()
                 },
                 sign: "x123a@s!s(3@41^2!@^4"
@@ -183,6 +198,31 @@
         </tr>
         <tr>
             <td colspan="2"><input type="button" onclick="testpushbadge()" value="PUSHBADGE"/></td>
+        </tr>
+    </table>
+</form>
+
+<h3>KGPush Test</h3>
+<form id="kgpushform">
+    <table>
+        <tr>
+            <td width="80">uid:</td>
+            <td><input name="uid"/></td>
+        </tr>
+        <tr>
+            <td>msg:</td>
+            <td><input name="msg"/></td>
+        </tr>
+        <tr>
+            <td>url:</td>
+            <td><input name="url"/></td>
+        </tr>
+        <tr>
+            <td>func:</td>
+            <td><input name="func"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="button" onclick="testkgpush()" value="KGPUSH"/></td>
         </tr>
     </table>
 </form>
